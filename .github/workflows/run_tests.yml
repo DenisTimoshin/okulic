@@ -1,1 +1,38 @@
+name: Run autotests
 
+on:
+    # Ручной запуск workflow через интерфейс GitHub
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        description: select tests to run
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: Tests
+
+    steps:
+      # Шаг 1: Выполняем checkout кода из репозитория
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Шаг 2: Устанавливаем Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' # Укажите нужную версию Python
+
+      # Шаг 3: Устанавливаем зависимости из requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+        # Шаг 4: Запускаем тесты в зависимости от выбранного deployment_target
+      - name: Run tests
+        run: pytest -v
